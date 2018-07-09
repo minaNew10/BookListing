@@ -5,6 +5,8 @@ package com.example.android.booklisting;
  */
 
 
+import java.util.List;
+
 /**
  * A {@link Book} object contains information related to one book
  */
@@ -19,7 +21,7 @@ public class Book {
     /**
      * The name of tthe Author of the book
      */
-    private String mAuthor;
+    private List<String> mAuthor;
 
     /**
      * Constructs a new {@link Book} object
@@ -27,7 +29,7 @@ public class Book {
      * @param Title  of the book
      * @param Author name of the book's author
      */
-    public Book(String Title, String Author) {
+    public Book(String Title, List<String> Author) {
         this.mTitle = Title;
         this.mAuthor = Author;
     }
@@ -44,7 +46,7 @@ public class Book {
      * @return String represents the name of the Author
      */
 
-    public String getmAuthor() {
+    public List<String> getmAuthor() {
         return mAuthor;
     }
 }
