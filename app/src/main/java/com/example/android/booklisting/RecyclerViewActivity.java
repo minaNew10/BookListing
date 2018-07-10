@@ -16,10 +16,11 @@ import java.util.List;
  */
 
 public class RecyclerViewActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Book>> {
-    String url = "https://www.googleapis.com/books/v1/volumes?q=cook";
+    String url = "";
     RecyclerView recyclerView;
     List<Book> books = new ArrayList<>();
     BookAdapter bookAdapter;
+    Bundle b;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,7 +32,8 @@ public class RecyclerViewActivity extends AppCompatActivity implements LoaderMan
         bookAdapter = new BookAdapter(RecyclerViewActivity.this, books);
 
         recyclerView.setAdapter(bookAdapter);
-
+        b = getIntent().getExtras();
+        url = b.getString("url");
         getLoaderManager().initLoader(0, null, this);
     }
 
