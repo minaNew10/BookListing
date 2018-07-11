@@ -7,7 +7,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -18,11 +20,12 @@ import java.util.List;
  */
 
 public class RecyclerViewActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Book>> {
-    String url = "";
+    String url = "https://www.googleapis.com/books/v1/volumes?q=";
     RecyclerView recyclerView;
     List<Book> books = new ArrayList<>();
     BookAdapter bookAdapter;
     TextView txtvEmptyState;
+    ProgressBar progressBar;
     Bundle b;
 
     @Override
@@ -36,9 +39,12 @@ public class RecyclerViewActivity extends AppCompatActivity implements LoaderMan
 
         recyclerView.setAdapter(bookAdapter);
         txtvEmptyState = findViewById(R.id.txtvEmptyState);
+        progressBar = findViewById(R.id.loading_spinner);
         b = getIntent().getExtras();
-        url = b.getString("url");
+        String queryParam = b.getString("queryParam");
+        url += queryParam;
         getLoaderManager().initLoader(0, null, this);
+
     }
 
     @Override
@@ -49,6 +55,7 @@ public class RecyclerViewActivity extends AppCompatActivity implements LoaderMan
 
     @Override
     public void onLoadFinished(Loader<List<Book>> loader, List<Book> data) {
+        progressBar.setVisibility(View.GONE);
         if (data == null || data.size() < 1) {
             txtvEmptyState.setVisibility(View.VISIBLE);
             txtvEmptyState.setText("No data available");

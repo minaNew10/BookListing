@@ -3,9 +3,11 @@ package com.example.android.booklisting;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     // api key = AIzaSyCNkAmJ9fPmCvC4mPd8YfMpdKGB1cK7um8
@@ -24,11 +26,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 queryParam = etxtSearch.getText().toString().replace(" ", "%20");
-                String url = "https://www.googleapis.com/books/v1/volumes?q=title:" + queryParam;
-
-                Intent intent = new Intent(MainActivity.this, RecyclerViewActivity.class);
-                intent.putExtra("url", url);
-                startActivity(intent);
+                if (!TextUtils.isEmpty(queryParam)) {
+                    Intent intent = new Intent(MainActivity.this, RecyclerViewActivity.class);
+                    intent.putExtra("queryParam", queryParam);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(MainActivity.this, "Please type search item", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
