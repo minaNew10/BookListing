@@ -23,8 +23,9 @@ public class MainActivity extends AppCompatActivity {
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                queryParam = etxtSearch.getText().toString();
-                String url = "https://www.googleapis.com/books/v1/volumes?q=" + queryParam;
+                queryParam = etxtSearch.getText().toString().replace(" ", "%20");
+                String url = "https://www.googleapis.com/books/v1/volumes?q=title:" + queryParam;
+
                 Intent intent = new Intent(MainActivity.this, RecyclerViewActivity.class);
                 intent.putExtra("url", url);
                 startActivity(intent);

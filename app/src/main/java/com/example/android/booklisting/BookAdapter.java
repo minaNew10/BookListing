@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Created by M on 08/07/2018.
@@ -56,8 +57,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
     public void onBindViewHolder(@NonNull BookViewHolder holder, int position) {
         Book book = books.get(position);
         holder.txtvTitle.setText(book.getmTitle());
-        holder.txtvAuthor.setText(book.getmAuthor().toString());
-
+        String authors = book.getmAuthor();
+        holder.txtvAuthor.setText(authors);
     }
 
     /**
@@ -65,6 +66,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
      */
     @Override
     public int getItemCount() {
-        return books.size();
+        if (books != null && books.size() > 0)
+            return books.size();
+        return 0;
     }
 }

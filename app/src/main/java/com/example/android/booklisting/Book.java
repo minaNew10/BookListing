@@ -19,19 +19,19 @@ public class Book {
     private String mTitle;
 
     /**
-     * The name of tthe Author of the book
+     * name of the Authors of the book
      */
-    private List<String> mAuthor;
+    private String mAuthor;
 
     /**
      * Constructs a new {@link Book} object
      *
      * @param Title  of the book
-     * @param Author name of the book's author
+     * @param Authors name of the book's author
      */
-    public Book(String Title, List<String> Author) {
+    public Book(String Title, String Authors) {
         this.mTitle = Title;
-        this.mAuthor = Author;
+        this.mAuthor = Authors;
     }
 
     /**
@@ -46,7 +46,7 @@ public class Book {
      * @return String represents the name of the Author
      */
 
-    public List<String> getmAuthor() {
+    public String getmAuthor() {
         return mAuthor;
     }
 }

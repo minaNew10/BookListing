@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,7 @@ public class RecyclerViewActivity extends AppCompatActivity implements LoaderMan
     RecyclerView recyclerView;
     List<Book> books = new ArrayList<>();
     BookAdapter bookAdapter;
+    TextView txtvEmptyState;
     Bundle b;
 
     @Override
@@ -32,6 +35,7 @@ public class RecyclerViewActivity extends AppCompatActivity implements LoaderMan
         bookAdapter = new BookAdapter(RecyclerViewActivity.this, books);
 
         recyclerView.setAdapter(bookAdapter);
+        txtvEmptyState = findViewById(R.id.txtvEmptyState);
         b = getIntent().getExtras();
         url = b.getString("url");
         getLoaderManager().initLoader(0, null, this);
@@ -45,8 +49,14 @@ public class RecyclerViewActivity extends AppCompatActivity implements LoaderMan
 
     @Override
     public void onLoadFinished(Loader<List<Book>> loader, List<Book> data) {
-        bookAdapter.books = data;
-        bookAdapter.notifyDataSetChanged();
+        if (data == null || data.size() < 1) {
+            txtvEmptyState.setVisibility(View.VISIBLE);
+            txtvEmptyState.setText("No data available");
+        } else {
+            txtvEmptyState.setVisibility(View.GONE);
+            bookAdapter.books = data;
+            bookAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

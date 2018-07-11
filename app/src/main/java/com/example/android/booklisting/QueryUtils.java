@@ -139,8 +139,20 @@ class QueryUtils {
                 JSONObject volumeInfo = bookInfo.getJSONObject("volumeInfo");
                 String title = volumeInfo.getString("title");
                 JSONArray authors = volumeInfo.getJSONArray("authors");
-                List<String> authorsList = Arrays.asList(authors.toString());
-                Book book = new Book(title, authorsList);
+                StringBuilder sb = new StringBuilder();
+                for (int j = 0, n2 = authors.length(); j < n2; j++) {
+                    sb.append(authors.get(j));
+                    if (j != n2 - 1) {
+                        sb.append(", ");
+                    } else {
+                        sb.append(".");
+                    }
+
+
+                }
+
+
+                Book book = new Book(title, sb.toString());
                 books.add(book);
 
             }
