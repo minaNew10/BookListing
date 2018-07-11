@@ -1,7 +1,10 @@
 package com.example.android.booklisting;
 
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Loader;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +31,9 @@ public class RecyclerViewActivity extends AppCompatActivity implements LoaderMan
     ProgressBar progressBar;
     Bundle b;
 
+    ConnectivityManager connectivityManager;
+    NetworkInfo networkInfo;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,11 +46,20 @@ public class RecyclerViewActivity extends AppCompatActivity implements LoaderMan
         recyclerView.setAdapter(bookAdapter);
         txtvEmptyState = findViewById(R.id.txtvEmptyState);
         progressBar = findViewById(R.id.loading_spinner);
+
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        networkInfo = connectivityManager.getActiveNetworkInfo();
         b = getIntent().getExtras();
         String queryParam = b.getString("queryParam");
         url += queryParam;
-        getLoaderManager().initLoader(0, null, this);
-
+        if (networkInfo != null && networkInfo.isConnected()) {
+            progressBar.setVisibility(View.VISIBLE);
+            getLoaderManager().initLoader(0, null, this);
+        } else {
+            progressBar.setVisibility(View.GONE);
+            txtvEmptyState.setVisibility(View.VISIBLE);
+            txtvEmptyState.setText("No internet connection");
+        }
     }
 
     @Override
