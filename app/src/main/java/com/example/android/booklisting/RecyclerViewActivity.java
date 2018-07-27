@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -24,8 +25,10 @@ import java.util.List;
  */
 
 public class RecyclerViewActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Book>> {
+    private static final String TAG = "RecyclerViewActivity";
     /**
      * URL for the book data from google books api
+     *
      */
     private static final String URL_GOOGLE_BOOKS_API = "https://www.googleapis.com/books/v1/volumes?";
 
@@ -50,9 +53,7 @@ public class RecyclerViewActivity extends AppCompatActivity implements LoaderMan
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(RecyclerViewActivity.this));
 
-        bookAdapter = new BookAdapter(RecyclerViewActivity.this, books);
 
-        recyclerView.setAdapter(bookAdapter);
         txtvEmptyState = findViewById(R.id.txtvEmptyState);
         progressBar = findViewById(R.id.loading_spinner);
 
@@ -72,14 +73,14 @@ public class RecyclerViewActivity extends AppCompatActivity implements LoaderMan
     @Override
     public Loader<List<Book>> onCreateLoader(int id, Bundle args) {
         Bundle b = getIntent().getExtras();
-        String queryParam = b.getString("queryParam");
+
 
         Uri baseUri = Uri.parse(URL_GOOGLE_BOOKS_API);
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
-        uriBuilder.appendQueryParameter("q", queryParam);
+        uriBuilder.appendQueryParameter("q", b.getString("queryParam"));
         uriBuilder.appendQueryParameter("maxResults", "20");
-
+        Log.i(TAG, "onCreateLoader: " + uriBuilder.toString());
         return new BookLoader(RecyclerViewActivity.this, uriBuilder.toString());
     }
 
@@ -92,8 +93,8 @@ public class RecyclerViewActivity extends AppCompatActivity implements LoaderMan
             txtvEmptyState.setText("No data available");
         } else {
             txtvEmptyState.setVisibility(View.GONE);
-            bookAdapter.books = data;
-            bookAdapter.notifyDataSetChanged();
+            bookAdapter = new BookAdapter(this, data);
+            recyclerView.setAdapter(bookAdapter);
         }
     }
 
