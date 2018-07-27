@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -23,13 +24,21 @@ import java.util.List;
  */
 
 public class RecyclerViewActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Book>> {
-    String url = "https://www.googleapis.com/books/v1/volumes?q=";
+    /**
+     * URL for the book data from google books api
+     */
+    private static final String URL_GOOGLE_BOOKS_API = "https://www.googleapis.com/books/v1/volumes?";
+
+    private static final int BOOK_LOADER_ID = 0;
+
     RecyclerView recyclerView;
+
     List<Book> books = new ArrayList<>();
     BookAdapter bookAdapter;
+
     TextView txtvEmptyState;
     ProgressBar progressBar;
-    Bundle b;
+
 
     ConnectivityManager connectivityManager;
     NetworkInfo networkInfo;
@@ -49,12 +58,10 @@ public class RecyclerViewActivity extends AppCompatActivity implements LoaderMan
 
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         networkInfo = connectivityManager.getActiveNetworkInfo();
-        b = getIntent().getExtras();
-        String queryParam = b.getString("queryParam");
-        url += queryParam;
+
         if (networkInfo != null && networkInfo.isConnected()) {
             progressBar.setVisibility(View.VISIBLE);
-            getLoaderManager().initLoader(0, null, this);
+            getLoaderManager().initLoader(BOOK_LOADER_ID, null, this);
         } else {
             progressBar.setVisibility(View.GONE);
             txtvEmptyState.setVisibility(View.VISIBLE);
@@ -64,9 +71,18 @@ public class RecyclerViewActivity extends AppCompatActivity implements LoaderMan
 
     @Override
     public Loader<List<Book>> onCreateLoader(int id, Bundle args) {
+        Bundle b = getIntent().getExtras();
+        String queryParam = b.getString("queryParam");
 
-        return new BookLoader(RecyclerViewActivity.this, url);
+        Uri baseUri = Uri.parse(URL_GOOGLE_BOOKS_API);
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+
+        uriBuilder.appendQueryParameter("q", queryParam);
+        uriBuilder.appendQueryParameter("maxResults", "20");
+
+        return new BookLoader(RecyclerViewActivity.this, uriBuilder.toString());
     }
+
 
     @Override
     public void onLoadFinished(Loader<List<Book>> loader, List<Book> data) {

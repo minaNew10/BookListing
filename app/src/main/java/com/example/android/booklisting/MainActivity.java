@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                queryParam = etxtSearch.getText().toString().replace(" ", "%20");
+                queryParam = etxtSearch.getText().toString().trim();
                 if (!TextUtils.isEmpty(queryParam)) {
                     Intent intent = new Intent(MainActivity.this, RecyclerViewActivity.class);
                     intent.putExtra("queryParam", queryParam);
