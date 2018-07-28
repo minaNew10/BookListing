@@ -55,10 +55,28 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
      */
     @Override
     public void onBindViewHolder(@NonNull BookViewHolder holder, int position) {
-//        Book book = books.get(position);
-//        holder.txtvTitle.setText(book.getmTitle());
-//        String authors = book.getmAuthor();
-//        holder.txtvAuthor.setText(authors);
+        Book book = books.get(position);
+        holder.txtvTitle.setText(book.getmTitle());
+        if (book.getmSubTitle() == null)
+            holder.txtvSubtitle.setVisibility(View.GONE);
+        else
+            holder.txtvSubtitle.setText(book.getmSubTitle());
+
+        //extracting the names of authors into a stringbuilder
+        StringBuilder sbAauthors = new StringBuilder();
+        List<String> listAuthors = book.getmAuthors();
+        int len = listAuthors.size();
+        if (len > 0)
+            sbAauthors.append(listAuthors.get(0));
+        for (int i = 0; i < len; i++) {
+            sbAauthors.append(", " + listAuthors.get(i));
+        }
+        sbAauthors.append(".");
+        holder.txtvAuthor.setText(sbAauthors);
+
+        holder.txtvPageCount.setText(book.getmPageCount());
+
+        holder.txtvReview.setText(book.getmAverageRating());
     }
 
     /**
