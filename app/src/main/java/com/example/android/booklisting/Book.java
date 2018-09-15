@@ -78,6 +78,16 @@ public class Book {
         this.imagePreview = imagePreview;
     }
 
+    public Book(String mTitle, String mSubTitle, List<String> mAuthors, String mAverageRating,
+                String mPageCount, Bitmap mSmallThumbnail) {
+        this(mTitle, mAuthors);
+        this.mAuthors = mAuthors;
+        this.mAverageRating = mAverageRating;
+        this.mPageCount = mPageCount;
+        this.mSmallThumbnail = mSmallThumbnail;
+        this.imagePreview = null;
+    }
+
     /**
      * @return String represents the title of the book
      */

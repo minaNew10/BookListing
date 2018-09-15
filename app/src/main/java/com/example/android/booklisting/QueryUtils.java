@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static android.graphics.BitmapFactory.decodeStream;
+
 /**
  * Created by M on 09/07/2018.
  * <p>
@@ -173,7 +175,9 @@ class QueryUtils {
                 if (volumeInfo.has("imageLinks")) {
                     JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
                     if (imageLinks.has("smallThumbnail")) {
-                        smallThumbnail = fetchThumbnail(imageLinks.getString("smallThumbnail"));
+                        String smallThumbnailUrl = imageLinks.getString("smallThumbnail");
+                        Log.i(TAG, "extractBooksFromJson: " + smallThumbnailUrl);
+                        smallThumbnail = fetchThumbnail(smallThumbnailUrl);
                     }
                     if (imageLinks.has("thumbnail")) {
                         largeThumbnail = fetchThumbnail(imageLinks.getString("thumbnail"));
@@ -196,8 +200,61 @@ class QueryUtils {
         return books;
     }
 
-    private static Bitmap fetchThumbnail(String smallThumbnail) {
-        return null;
+    private static Bitmap fetchThumbnail(String requestUrl) {
+        //Create URL object
+        URL url = createUrl(requestUrl);
+
+        //Perform HTTP request to the URL and receive a JSON response back
+        Bitmap smallThumbnail = null;
+        try {
+            smallThumbnail = makeHttpRequestForBitmap(url);
+        } catch (IOException e) {
+            Log.e(TAG, "Problem making the HTTP request.", e);
+        }
+        Log.v("SmallThumbnail", String.valueOf(smallThumbnail));
+        return smallThumbnail;
+    }
+
+    private static Bitmap makeHttpRequestForBitmap(URL url) throws IOException {
+        Bitmap bitmapResponse = null;
+
+        //If the URL is null, then return early.
+        if (url == null) {
+            return null;
+        }
+
+        HttpURLConnection urlConnection = null;
+        InputStream inputStream = null;
+        try {
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setReadTimeout(10000 /* milliseconds */);
+            urlConnection.setConnectTimeout(15000 /* milliseconds */);
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+
+            // If the request was successful (response code 200),
+            // then read the input stream and parse the response.
+            if (urlConnection.getResponseCode() == 200) {
+                inputStream = urlConnection.getInputStream();
+                bitmapResponse = decodeStream(inputStream);
+
+            } else {
+                Log.e(TAG, "Error response code: " + urlConnection.getResponseCode());
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Problem retrieving the earthquake JSON results.", e);
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            if (inputStream != null) {
+                // Closing the input stream could throw an IOException, which is why
+                // the makeHttpRequest(URL url) method signature specifies than an IOException
+                // could be thrown.
+                inputStream.close();
+            }
+        }
+        return bitmapResponse;
     }
 
 }

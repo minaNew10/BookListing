@@ -2,5 +2,6 @@
     <string name="app_name">Book Listing</string>
     <string name="btn_search">Search</string>
     <string name="etxt_search">Type your search here</string>
-
+    <string name="no_data_text">No data available
+    Try another search</string>
 </resources>
