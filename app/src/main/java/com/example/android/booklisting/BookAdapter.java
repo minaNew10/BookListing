@@ -2,10 +2,13 @@ package com.example.android.booklisting;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +20,7 @@ import java.util.function.Consumer;
  * Adapter class to populate data into the recycler View
  */
 
-public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
+public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder> {
     /**
      * context of the recycler view
      */
@@ -26,7 +29,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
     /**
      * data for the books to populate
      */
-    List<Book> books;
+    private List<Book> books;
 
     /**
      * constructs an object of the adapter which handles populating data into the recycler view
@@ -62,7 +65,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
         else
             holder.txtvSubtitle.setText(book.getmSubTitle());
 
-        //extracting the names of authors into a stringbuilder
+
         StringBuilder sbAauthors = new StringBuilder();
         List<String> listAuthors = book.getmAuthors();
         int len = listAuthors.size();
@@ -76,7 +79,13 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
 
         holder.txtvPageCount.setText(book.getmPageCount());
 
-        holder.txtvReview.setText(book.getmAverageRating());
+        String averageRating = book.getmAverageRating();
+        if (averageRating == "-")
+            holder.txtvReview.setVisibility(View.GONE);
+        else
+            holder.txtvReview.setText(book.getmAverageRating());
+
+        holder.imgvSmallThumbnail.setImageBitmap(book.getmSmallThumbnail());
     }
 
     /**
@@ -88,4 +97,50 @@ public class BookAdapter extends RecyclerView.Adapter<BookViewHolder> {
             return books.size();
         return 0;
     }
+
+    public class BookViewHolder extends RecyclerView.ViewHolder {
+        /**
+         * parent of the whole item
+         */
+        ConstraintLayout parent;
+
+        /**
+         * textview for the title of the book
+         */
+        TextView txtvTitle;
+
+        /**
+         * textview for the subtitle of the book
+         */
+        TextView txtvSubtitle;
+
+        /**
+         * Textview for the name of the author of the book
+         */
+        TextView txtvAuthor;
+
+        TextView txtvReview;
+
+        TextView txtvPageCount;
+
+        ImageView imgvSmallThumbnail;
+
+        /**
+         * Constructs a new {@link com.example.android.booklisting.BookAdapter.BookViewHolder} object for the recycler view
+         *
+         * @param itemView Layout of the item
+         */
+        public BookViewHolder(View itemView) {
+            super(itemView);
+            parent = itemView.findViewById(R.id.parent_of_recycler_item);
+            txtvTitle = itemView.findViewById(R.id.txtv_title);
+            txtvSubtitle = itemView.findViewById(R.id.txtv_subtitle);
+            txtvReview = itemView.findViewById(R.id.txtv_review);
+            txtvPageCount = itemView.findViewById(R.id.txtv_page_count);
+            txtvAuthor = itemView.findViewById(R.id.txtv_author);
+            imgvSmallThumbnail = itemView.findViewById(R.id.imgv_small_thumbnail);
+
+        }
+    }
+
 }

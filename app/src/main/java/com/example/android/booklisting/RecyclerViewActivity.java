@@ -2,6 +2,7 @@ package com.example.android.booklisting;
 
 import android.app.LoaderManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -72,13 +73,16 @@ public class RecyclerViewActivity extends AppCompatActivity implements LoaderMan
 
     @Override
     public Loader<List<Book>> onCreateLoader(int id, Bundle args) {
-        Bundle b = getIntent().getExtras();
+        Intent intent = getIntent();
+        String s = null;
+        if (intent.hasExtra(Intent.ACTION_SEARCH))
+            s = intent.getStringExtra(Intent.ACTION_SEARCH);
 
 
         Uri baseUri = Uri.parse(URL_GOOGLE_BOOKS_API);
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
-        uriBuilder.appendQueryParameter("q", b.getString("queryParam"));
+        uriBuilder.appendQueryParameter("q", s);
         uriBuilder.appendQueryParameter("maxResults", "20");
         Log.i(TAG, "onCreateLoader: " + uriBuilder.toString());
         return new BookLoader(RecyclerViewActivity.this, uriBuilder.toString());
@@ -90,7 +94,7 @@ public class RecyclerViewActivity extends AppCompatActivity implements LoaderMan
         progressBar.setVisibility(View.GONE);
         if (data == null || data.size() < 1) {
             txtvEmptyState.setVisibility(View.VISIBLE);
-            txtvEmptyState.setText("No data available");
+            txtvEmptyState.setText(R.string.no_data_text);
         } else {
             txtvEmptyState.setVisibility(View.GONE);
             bookAdapter = new BookAdapter(this, data);

@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
                 queryParam = etxtSearch.getText().toString().trim();
                 if (!TextUtils.isEmpty(queryParam)) {
                     Intent intent = new Intent(MainActivity.this, RecyclerViewActivity.class);
-                    intent.putExtra("queryParam", queryParam);
+                    intent.putExtra(Intent.ACTION_SEARCH, queryParam);
                     startActivity(intent);
                 } else {
                     Toast.makeText(MainActivity.this, "Please type search item", Toast.LENGTH_LONG).show();
