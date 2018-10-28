@@ -21,6 +21,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 import static android.graphics.BitmapFactory.decodeStream;
 
 /**
@@ -79,29 +83,43 @@ class QueryUtils {
         if (urlObject == null)
             return jsonResponse;
 
-        HttpURLConnection urlConnection = null;
-        InputStream inputStream = null;
+//        HttpURLConnection urlConnection = null;
+//        InputStream inputStream = null;
+//        try {
+//            urlConnection = (HttpURLConnection) urlObject.openConnection();
+//            urlConnection.setRequestMethod("GET");
+//            urlConnection.setConnectTimeout(15000);
+//            urlConnection.setReadTimeout(1000);
+//            urlConnection.connect();
+//            if (urlConnection.getResponseCode() == 200) {
+//                inputStream = urlConnection.getInputStream();
+//                jsonResponse = readFromStream(inputStream);
+//            } else {
+//                Log.i(TAG, "makeHttpRequeat: Error in response code" + urlConnection.getResponseCode());
+//            }
+//        } catch (IOException e) {
+//            Log.i(TAG, "makeHttpRequeat: problems retrieving book results");
+//        } finally {
+//            if (urlConnection != null) {
+//                urlConnection.disconnect();
+//            }
+//            if (inputStream != null) {
+//                inputStream.close();
+//            }
+//        }
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(urlObject).build();
+        Response response = null;
         try {
-            urlConnection = (HttpURLConnection) urlObject.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.setConnectTimeout(15000);
-            urlConnection.setReadTimeout(1000);
-            urlConnection.connect();
-            if (urlConnection.getResponseCode() == 200) {
-                inputStream = urlConnection.getInputStream();
-                jsonResponse = readFromStream(inputStream);
-            } else {
-                Log.i(TAG, "makeHttpRequeat: Error in response code" + urlConnection.getResponseCode());
+            response = client.newCall(request).execute();
+            if(response.code() == 200){
+                jsonResponse = response.body().string();
             }
-        } catch (IOException e) {
-            Log.i(TAG, "makeHttpRequeat: problems retrieving book results");
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-            if (inputStream != null) {
-                inputStream.close();
-            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            response.close();
         }
         return jsonResponse;
     }
